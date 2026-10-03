@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Outbox/Outbox.csproj" />
+    <Project Path="src/Outbox.MySql/Outbox.MySql.csproj" />
+    <Project Path="src/Outbox.Postgres/Outbox.Postgres.csproj" />
+    <Project Path="src/Outbox.SqlServer/Outbox.SqlServer.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Outbox.IntegrationTests/Outbox.IntegrationTests.csproj" />
+    <Project Path="tests/Outbox.Tests/Outbox.Tests.csproj" />
+  </Folder>
+</Solution>
