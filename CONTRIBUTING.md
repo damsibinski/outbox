@@ -9,8 +9,6 @@ persistence and background processing for .NET.
 - Search existing GitHub issues for duplicates before opening a new one.
 - For larger changes (new providers, API redesign, retry or dead-letter
   behavior), open an issue first so we can agree on direction.
-- Outbox is pre-release. Public APIs may still change; breaking changes belong
-  in [CHANGELOG.md](CHANGELOG.md).
 
 ## Development setup
 
@@ -65,7 +63,8 @@ and disallow force-push except for emergencies.
 
 After a change is on `main`, publish packages from a **version tag** (`v1.2.3`) or run
 [Publish NuGet](.github/workflows/publish-nuget.yml) manually with a SemVer version.
-Packages: `Outbox`, `Outbox.SqlServer`, `Outbox.Postgres`, `Outbox.MySql`.
+Packages: `Outbox.Core`, `Outbox.SqlServer`, `Outbox.Postgres`,
+`Outbox.MySql`.
 
 Publishing uses [NuGet Trusted Publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing)
 (OIDC from GitHub Actions — no long-lived API key in the repo).
@@ -74,7 +73,7 @@ Publishing uses [NuGet Trusted Publishing](https://learn.microsoft.com/nuget/nug
    - **Repository owner** and **repository** — your GitHub org/user and repo name.
    - **Workflow file:** `publish-nuget.yml` (filename only, not the full path).
    - **Environment (optional):** `nuget` — must match the workflow `environment:` if set.
-   - **Scopes:** allow publishing new packages/versions for `Outbox*` (or your package IDs).
+   - **Scopes:** allow publishing new packages/versions matching `Outbox.*`.
 2. On GitHub: **Settings → Environments → `nuget`** (optional approvals).
 3. Repository secret **`NUGET_USER`** — your nuget.org **profile name** (not email).
 4. Push tag `vX.Y.Z` or run the workflow manually; the first successful publish fully activates
