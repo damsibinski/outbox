@@ -1,4 +1,4 @@
-![Outbox logo](assets/icon.png)
+![Outbox logo](https://raw.githubusercontent.com/damsibinski/outbox/main/assets/icon.png)
 
 # Outbox
 
