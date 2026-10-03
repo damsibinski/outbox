@@ -1,19 +1,13 @@
-<p align="center">
-  <img src="assets/logo.svg" alt="Outbox logo" width="144" height="144" />
-</p>
+![Outbox logo](assets/icon.png)
 
-<h1 align="center">Outbox</h1>
+# Outbox
 
-<p align="center">
-  Transactional outbox persistence and background processing for .NET.
-</p>
+Transactional outbox persistence and background processing for .NET.
 
-<p align="center">
-  <a href="https://github.com/damsibinski/outbox/actions/workflows/ci.yml"><img src="https://github.com/damsibinski/outbox/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
-  <a href="https://www.nuget.org/packages/Outbox.Core"><img src="https://img.shields.io/nuget/v/Outbox.Core.svg" alt="NuGet version" /></a>
-  <a href="https://dotnet.microsoft.com/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10.0-512BD4" alt=".NET 10" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" /></a>
-</p>
+[![CI status](https://github.com/damsibinski/outbox/actions/workflows/ci.yml/badge.svg)](https://github.com/damsibinski/outbox/actions/workflows/ci.yml)
+[![NuGet version](https://img.shields.io/nuget/v/Outbox.Core.svg)](https://www.nuget.org/packages/Outbox.Core)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/damsibinski/outbox/blob/main/LICENSE)
 
 Outbox stores messages in the same database transaction as your application
 changes, then delivers them through a small hosted worker. Provider-specific
