@@ -1,0 +1,46 @@
+# Trunk-based development: `main` is the only integration branch.
+# Every change lands via PR (or direct push when allowed) with the same gate.
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CONFIGURATION: Release
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Outbox.slnx
+
+      - name: Build
+        run: dotnet build Outbox.slnx --no-restore -c ${{ env.CONFIGURATION }}
+
+      - name: Test
+        run: dotnet test Outbox.slnx --no-build -c ${{ env.CONFIGURATION }} --verbosity normal

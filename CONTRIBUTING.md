@@ -48,9 +48,41 @@ Run the full test suite before opening a pull request:
 dotnet test Outbox.slnx
 ```
 
+## Branching (trunk-based)
+
+We use [trunk-based development](https://trunkbaseddevelopment.com/):
+
+- **`main` is the trunk** — always deployable; there is no long-lived `develop` branch.
+- Work on **short-lived branches** (hours to a few days), then merge back to `main`.
+- **Pull requests** target `main` and must pass the [CI workflow](.github/workflows/ci.yml)
+  before merge.
+- Prefer **small, frequent merges** over large batches.
+
+On GitHub, enable branch protection on `main`: require the **Build and test** check,
+and disallow force-push except for emergencies.
+
+### NuGet releases
+
+After a change is on `main`, publish packages from a **version tag** (`v1.2.3`) or run
+[Publish NuGet](.github/workflows/publish-nuget.yml) manually with a SemVer version.
+Packages: `Outbox`, `Outbox.SqlServer`, `Outbox.Postgres`, `Outbox.MySql`.
+
+Publishing uses [NuGet Trusted Publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing)
+(OIDC from GitHub Actions — no long-lived API key in the repo).
+
+1. On [nuget.org](https://www.nuget.org): **Account → Trusted Publishing** → add a policy:
+   - **Repository owner** and **repository** — your GitHub org/user and repo name.
+   - **Workflow file:** `publish-nuget.yml` (filename only, not the full path).
+   - **Environment (optional):** `nuget` — must match the workflow `environment:` if set.
+   - **Scopes:** allow publishing new packages/versions for `Outbox*` (or your package IDs).
+2. On GitHub: **Settings → Environments → `nuget`** (optional approvals).
+3. Repository secret **`NUGET_USER`** — your nuget.org **profile name** (not email).
+4. Push tag `vX.Y.Z` or run the workflow manually; the first successful publish fully activates
+   the policy (private repos get a 7-day activation window — see Microsoft docs).
+
 ## Pull requests
 
-1. Fork the repository and create a branch from `main`.
+1. Fork the repository and create a short-lived branch from `main`.
 2. Make focused changes — one concern per pull request when possible.
 3. Add or update tests for behavior you change.
 4. Update [README.md](README.md) when public usage changes.

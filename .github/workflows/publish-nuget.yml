@@ -1,0 +1,103 @@
+# Publishes library packages to NuGet.org after a version tag on main or manual dispatch.
+# Trunk flow: merge to main → tag vX.Y.Z → this workflow packs and pushes.
+name: Publish NuGet
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: SemVer package version (e.g. 1.0.0)
+        required: true
+        type: string
+  push:
+    tags:
+      - v*
+
+concurrency:
+  group: publish-nuget-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CONFIGURATION: Release
+
+jobs:
+  publish:
+    name: Pack and push
+    runs-on: ubuntu-latest
+    environment: nuget
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?(\+[A-Za-z0-9.-]+)?$ ]]; then
+            echo "Invalid SemVer: $VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Outbox.slnx
+
+      - name: Build
+        run: >
+          dotnet build Outbox.slnx
+          --no-restore
+          -c ${{ env.CONFIGURATION }}
+          /p:Version=${{ steps.version.outputs.version }}
+          /p:ContinuousIntegrationBuild=true
+          /p:RepositoryUrl=https://github.com/${{ github.repository }}.git
+
+      - name: Test
+        run: dotnet test Outbox.slnx --no-build -c ${{ env.CONFIGURATION }} --verbosity normal
+
+      - name: Pack
+        run: >
+          dotnet pack Outbox.slnx
+          --no-build
+          -c ${{ env.CONFIGURATION }}
+          -o "${{ runner.temp }}/packages"
+          /p:Version=${{ steps.version.outputs.version }}
+          /p:ContinuousIntegrationBuild=true
+          /p:RepositoryUrl=https://github.com/${{ github.repository }}.git
+
+      - name: NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: nuget_login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet.org
+        run: >
+          dotnet nuget push "${{ runner.temp }}/packages/*.nupkg"
+          --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+
+      - name: Push symbols
+        run: >
+          dotnet nuget push "${{ runner.temp }}/packages/*.snupkg"
+          --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
