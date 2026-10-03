@@ -8,4 +8,10 @@
     fill="none"
     stroke="#ffffff"
     stroke-width="56"/>
+  <rect
+    x="200"
+    y="200"
+    width="112"
+    height="112"
+    fill="#ffffff"/>
 </svg>
