@@ -51,12 +51,15 @@ same core API.
 
 ### 1. Install a provider
 
+Install one provider package:
+
 ```bash
 dotnet add package Outbox.SqlServer
+# or
+dotnet add package Outbox.Postgres
+# or
+dotnet add package Outbox.MySql
 ```
-
-Use `Outbox.Postgres` or `Outbox.MySql` for the other supported databases.
-The provider package installs `Outbox.Core` automatically.
 
 ### 2. Define a message and handler
 
