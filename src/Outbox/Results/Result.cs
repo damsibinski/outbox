@@ -1,4 +1,4 @@
-namespace Outbox;
+namespace Outbox.Results;
 
 public abstract class Result
 {

@@ -28,6 +28,7 @@
         <Using Include="Outbox.IntegrationTests.Acceptance.Handlers" />
         <Using Include="Outbox.IntegrationTests.Acceptance.Models" />
         <Using Include="Outbox.IntegrationTests.Acceptance.Support" />
+        <Using Include="Outbox.Results" />
         <Using Include="Shouldly" />
         <Using Include="Xunit" />
     </ItemGroup>

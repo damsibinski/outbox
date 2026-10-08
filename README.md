@@ -64,6 +64,8 @@ dotnet add package Outbox.MySql
 ### 2. Define a message and handler
 
 ```csharp
+using Outbox.Results;
+
 public sealed record OrderPlaced(Guid OrderId);
 
 public sealed class OrderPlacedHandler : IOutboxHandler
@@ -263,6 +265,8 @@ Handlers decide what happens to the current attempt by returning `Success` or
 `Failure`. The message stays in the table until a handler returns `Success`.
 
 ```csharp
+using Outbox.Results;
+
 public sealed class OrderPlacedHandler(IPaymentGateway gateway) : IOutboxHandler
 {
     public async Task<Result> HandleAsync<T>(
@@ -430,7 +434,7 @@ Most applications only need these groups:
 | `IOutbox.EnsureSchema` | Idempotently creates the table and index. |
 | `IOutbox.AddAsync` | Enqueues immediately, later, or in a caller-owned transaction. |
 | `IOutboxHandler.HandleAsync` | Handles all deserialized payload types. |
-| `Success`, `Failure` | Completes or retains the claimed message. |
+| [`Result`](src/Outbox/Results/Result.cs), [`Success`](src/Outbox/Results/Success.cs), [`Failure`](src/Outbox/Results/Failure.cs) | Models whether the claimed message was completed or retained. |
 
 ### `IOutbox.AddAsync`
 

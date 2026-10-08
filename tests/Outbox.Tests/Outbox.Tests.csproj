@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Using Include="Outbox.Results" />
         <Using Include="Shouldly" />
         <Using Include="Xunit" />
     </ItemGroup>
